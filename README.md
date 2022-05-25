@@ -7,5 +7,5 @@
 ```shell
 > go get github.com/comeonjy/scan
 > go install github.com/comeonjy/scan@main
-> scan u 123.123.312.321:30001
+> sudo scan u 123.123.312.321:30001
 ```
