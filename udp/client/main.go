@@ -7,11 +7,13 @@ import (
 
 // UDP 客户端
 func main() {
-	socket, err := net.DialUDP("udp", nil, &net.UDPAddr{
-		//IP:   net.IPv4(0, 0, 0, 0),
-		IP:   net.IPv4(118, 24, 149, 250),
-		Port: 30001,
-	})
+	addr, err := net.ResolveUDPAddr("udp", "115.199.111.153:2323")
+	if err != nil {
+		fmt.Printf("地址解析失败，err: %v", err)
+		return
+	}
+	socket, err := net.DialUDP("udp", nil, addr)
+
 	if err != nil {
 		fmt.Println("连接UDP服务器失败，err: ", err)
 		return
