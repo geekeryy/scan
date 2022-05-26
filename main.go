@@ -14,6 +14,7 @@ import (
 
 	"github.com/spf13/cobra"
 	"golang.org/x/net/icmp"
+
 	"golang.org/x/net/ipv4"
 )
 
@@ -86,12 +87,11 @@ func ListenICMP(ctx context.Context, address []string, ch chan ICMPResp) {
 	}
 	defer conn.Close()
 
-	for _, addr := range address {
-		if err := TryUDP(addr); err != nil {
-			fmt.Println(err)
-			continue
+	go func() {
+		for _, addr := range address {
+			go TryUDP(addr)
 		}
-	}
+	}()
 
 	for {
 		buf := make([]byte, 1024)
