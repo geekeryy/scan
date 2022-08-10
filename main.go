@@ -23,7 +23,7 @@ var root = &cobra.Command{
 	Long:  "udp",
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) < 1 {
-			fmt.Println("err:非法参数列表")
+			log.Println("err:非法参数列表")
 			return
 		}
 		ScanUDP(args[1:]...)
@@ -77,12 +77,12 @@ type ICMPResp struct {
 func ListenICMP(ctx context.Context, address []string, ch chan ICMPResp) {
 	netAddr, err := net.ResolveIPAddr("ip4", "0.0.0.0")
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		return
 	}
 	conn, err := net.ListenIP("ip4:icmp", netAddr)
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		return
 	}
 	defer conn.Close()
@@ -97,25 +97,25 @@ func ListenICMP(ctx context.Context, address []string, ch chan ICMPResp) {
 		buf := make([]byte, 1024)
 		n, _, err := conn.ReadFrom(buf)
 		if err != nil {
-			fmt.Println(err)
+			log.Println(err)
 			return
 		}
 
 		msg, err := icmp.ParseMessage(1, buf[0:n])
 		if err != nil {
-			fmt.Println(err)
+			log.Println(err)
 			return
 		}
 
 		header, err := ipv4.ParseHeader(buf[8:])
 		if err != nil {
-			fmt.Println(err)
+			log.Println(err)
 			return
 		}
 
 		udp, err := ParseUDPMessage(buf[header.Len+8 : n])
 		if err != nil {
-			fmt.Println(err)
+			log.Println(err)
 			return
 		}
 
@@ -129,7 +129,7 @@ func ListenICMP(ctx context.Context, address []string, ch chan ICMPResp) {
 		select {
 		case <-ctx.Done():
 			close(ch)
-			fmt.Println(ctx.Err())
+			log.Println(ctx.Err())
 			return
 		default:
 			//fmt.Println(n, addr, msg.Type, msg.Code, msg.Checksum, string(marshal))
